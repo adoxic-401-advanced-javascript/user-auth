@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "jest": "jest --runInBand --verbose",
+    "jest": "jest --runInBand",
     "test": "npm run jest",
     "test:coverage": "npm run test -- --coverage",
     "test:watch": "npm run jest -- --watchAll",
@@ -37,7 +37,7 @@
     "supertest": "^4.0.2"
   },
   "jest": {
-    "preset": "@shelf/jest-mongodb",
+    "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "<rootDir>/e2e/setup.js"
     ]
