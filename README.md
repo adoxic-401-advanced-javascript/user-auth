@@ -5,7 +5,7 @@
 ### Author: Maeve Griffin
 
 ### Links and Resources
-* [submission PR](http://xyz.com)
+* [submission PR](https://github.com/adoxic-401-advanced-javascript/user-auth/pull/1)
 * [travis](http://xyz.com)
-* [back-end](http://xyz.com) (when applicable)
-* [front-end](http://xyz.com) (when applicable)
+* [](http://xyz.com) (when applicable)
+
