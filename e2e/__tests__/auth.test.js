@@ -2,6 +2,7 @@ const request = require('../request');
 const { dropCollection } = require('../db');
 const jwt = require('jsonwebtoken');
 const { signupUser } = require('../data-helpers');
+const User = require('../../lib/models/user');
 
 describe('Auth API', () => {
 
@@ -100,4 +101,37 @@ describe('Auth API', () => {
       .expect(401);
   });
 
+  const sithLord = {
+    email: 'evil@jointhedarkside.com',
+    password: 'thereCanOnlyBeOne'
+  };
+
+  // const padawan = {
+  //   email: 'ambitious@jointhedarkside.com',
+  //   password: 'heyoh'
+  // };
+
+  function makeFirstAdmin(admin) {
+    return request
+      .post('/api/auth/sign')
+      .send(admin)
+      .expect(200)
+      .then(({ body }) => body);
+  }
+  it('creates a admin user', () => {
+    makeFirstAdmin(sithLord)
+      .then(user => {
+        console.log('this is a string to fine things', user);
+        return User.updateById(
+          user._id,
+          { 
+            $addToSet: { 
+              roles: 'admin'
+            }
+          }
+        );
+      });
+  });
+
 });
+
