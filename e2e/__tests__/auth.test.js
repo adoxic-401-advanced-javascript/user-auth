@@ -176,5 +176,16 @@ describe('Auth API', () => {
           });
       });
   });
+  it('admin users can get users', () => {
+    return makeFirstAdmin(sithLord)
+      .then(admin => {
+        return request
+          .get('/api/auth/users')
+          .set('Authorization', admin.token)
+          .then(({ body }) => {
+            expect(body[0].email).toBe('me@me.com');
+          });
+      });
+  });
 });
 
