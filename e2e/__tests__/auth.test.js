@@ -106,22 +106,13 @@ describe('Auth API', () => {
     password: 'thereCanOnlyBeOne'
   };
 
-  // const padawan = {
-  //   email: 'ambitious@jointhedarkside.com',
-  //   password: 'heyoh'
-  // };
-
   function makeFirstAdmin(admin) {
     return request
-      .post('/api/auth/sign')
+      .post('/api/auth/signup')
       .send(admin)
       .expect(200)
-      .then(({ body }) => body);
-  }
-  it('creates a admin user', () => {
-    makeFirstAdmin(sithLord)
+      .then(({ body }) => body)
       .then(user => {
-        console.log('this is a string to fine things', user);
         return User.updateById(
           user._id,
           { 
@@ -130,8 +121,60 @@ describe('Auth API', () => {
             }
           }
         );
+      })
+      .then(() => {
+        return request
+          .post('/api/auth/signin')
+          .send(admin)
+          .expect(200)
+          .then(res => {
+            admin = res.body;
+            return res.body;
+          });
+      });
+  }
+  it('creates an admin user', () => {
+    return makeFirstAdmin(sithLord)
+      .then(thing => {
+        expect(thing.token).toBeTruthy();
       });
   });
 
+  it('creates an admin and then adds an admin', () => {
+    return makeFirstAdmin(sithLord)
+      .then(admin => {
+        return request
+          .put(`/api/auth/users/${user._id}/roles/admin`)
+          .set('Authorization', admin.token)
+          .send(user)
+          .expect(200);
+      })
+      .then(thing => {
+        const { body } = thing;
+        expect(body.roles[0]).toBe('admin');
+      });
+  });
+
+  it('creates an admin and then adds an admin and removes an admin', () => {
+    return makeFirstAdmin(sithLord)
+      .then(admin => {
+        return request
+          .put(`/api/auth/users/${user._id}/roles/admin`)
+          .set('Authorization', admin.token)
+          .send(user)
+          .expect(200)
+          .then(() => {
+            return request
+              .delete(`/api/auth/users/${user._id}/roles/admin`)
+              .set('Authorization', admin.token)
+              .send(user)
+              .expect(200);
+          })
+          .then(thing => {
+            const { body } = thing;
+            expect(body.favorites[0]).toBe(undefined);
+          });
+      });
+  });
 });
 
